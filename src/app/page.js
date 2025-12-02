@@ -8,6 +8,7 @@ function InputField({ label, value, setValue }) {
       <input
         type="number"
         value={value}
+        min={0}
         onChange={(e) => setValue(Number(e.target.value))} //
 
         className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
@@ -21,9 +22,15 @@ export default function Home() {
   const [height, setHeight] = useState(0);
   const [bmi, setBmi] = useState(null);
   const [status, setStatus] = useState("");
+  const [warning, setWarning] = useState("");
+
 
   const calculateBMI = () => {
-    if (!weight || !height) return;
+    setWarning(""); // clear previous warning
+    if (!weight || !height) {
+      setWarning("Please enter valid weight and height");
+      return;
+  }
     const bmiValue = weight / ((height / 100) ** 2);
     setBmi(bmiValue.toFixed(1));
 
@@ -31,7 +38,7 @@ export default function Home() {
     else if (bmiValue < 25) setStatus("Normal weight");
     else if (bmiValue < 30) setStatus("Overweight");
     else setStatus("Obese");
-  };
+  }; 
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-zinc-50 dark:bg-black p-8 font-sans">
@@ -39,6 +46,8 @@ export default function Home() {
 
       <InputField label="Weight (kg)" value={weight} setValue={setWeight} />
       <InputField label="Height (cm)" value={height} setValue={setHeight} />
+
+      {warning && <p className="text-red-500">{warning}</p>} 
 
       <button
         onClick={calculateBMI}
